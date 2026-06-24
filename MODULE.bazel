@@ -42,25 +42,6 @@ pip.parse(
 
 use_repo(pip, "pip_rules_mongo")
 
-bazel_dep(name = "rules_mypy", version = "0.41.0")
-
-# v0.41.0 is not in the BCR yet; needed for bazel 9 compatibility.
-archive_override(
-    module_name = "rules_mypy",
-    integrity = "sha256-uhIkx1Nv3GeQCa6yclkT1Agp7W54cMOntK3dMFtb5Zc=",
-    strip_prefix = "rules_mypy-0.41.0",
-    urls = ["https://github.com/bazel-contrib/rules_mypy/archive/refs/tags/v0.41.0.tar.gz"],
-)
-
-types = use_extension("@rules_mypy//mypy:types.bzl", "types")
-types.requirements(
-    name = "pip_types_rules_mongo",
-    pip_requirements = "@pip_rules_mongo//:requirements.bzl",
-    requirements_txt = "//:requirements.in",
-)
-use_repo(types, "pip_types_rules_mongo")
-
-
 _codeowners_validator = use_extension("//codeowners:codeowners_validator.bzl", "codeowners_validator_extension")
 use_repo(_codeowners_validator, "codeowners_validator")
 
