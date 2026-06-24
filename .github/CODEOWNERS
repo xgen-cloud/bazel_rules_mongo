@@ -1,0 +1,11 @@
+# This is a generated file do not make changes to this file.
+# This is generated from various OWNERS.yml files across the repo.
+# To regenerate this file run `bazel run -- //codeowners`
+# The documentation for the OWNERS.yml files can be found here:
+# https://github.com/10gen/mongo/blob/master/docs/owners/owners_format.md
+
+# The following patterns are parsed from ./OWNERS.yml
+* @pjjw @xgen-cloud/bazel-maintainers
+
+# The following patterns are parsed from ./engflow_auth/OWNERS.yml
+/engflow_auth/ @10gen/devprod-build

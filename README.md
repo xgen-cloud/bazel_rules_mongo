@@ -56,7 +56,7 @@ poetry(
 )
 ```
 
-5. Use the rule however you see fit! For example to add `bazel run codeowners` to your repo you can
+5. Use the rule however you see fit! For example to add `bazel run -- //codeowners` to your repo you can
    add the following to your root `BUILD.bazel` file
 
 ```

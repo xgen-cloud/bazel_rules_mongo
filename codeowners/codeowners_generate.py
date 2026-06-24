@@ -93,7 +93,7 @@ def print_diff_and_instructions(old_codeowners_contents, new_codeowners_contents
     sys.stdout.writelines(diff)
 
     print("\n" + "#" * 90)
-    print("# ACTION REQUIRED: If you are seeing this in CI you need to run `bazel run codeowners`")
+    print("# ACTION REQUIRED: If you are seeing this in CI you need to run `bazel run -- //codeowners`")
     print("#" * 90 + "\n")
 
 
@@ -460,7 +460,7 @@ def main():
     output_lines = [
         "# This is a generated file do not make changes to this file.",
         "# This is generated from various OWNERS.yml files across the repo.",
-        "# To regenerate this file run `bazel run codeowners`",
+        "# To regenerate this file run `bazel run -- //codeowners`",
         "# The documentation for the OWNERS.yml files can be found here:",
         "# https://github.com/10gen/mongo/blob/master/docs/owners/owners_format.md",
         "",
