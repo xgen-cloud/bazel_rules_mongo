@@ -1,5 +1,6 @@
-load("@poetry//:dependencies.bzl", "dependency")
-load("@rules_python//python:defs.bzl", "py_binary")
+# gazelle:python_generation_mode project
+
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 py_binary(
     name = "codeowners",
@@ -46,12 +47,8 @@ py_binary(
     main = "codeowners_generate.py",
     visibility = ["//visibility:public"],
     deps = [
-        dependency(
-            "pyyaml",
-        ),
-        dependency(
-            "gitpython",
-        ),
+        "@pip_rules_mongo//gitpython",
+        "@pip_rules_mongo//pyyaml",
     ],
 )
 
@@ -100,14 +97,37 @@ py_binary(
     main = "check_github_codeowner_errors.py",
     visibility = ["//visibility:public"],
     deps = [
-        dependency(
-            "requests",
-        ),
-        dependency(
-            "structlog",
-        ),
-        dependency(
-            "pyyaml",
-        ),
+        "@pip_rules_mongo//pyyaml",
+        "@pip_rules_mongo//requests",
+        "@pip_rules_mongo//structlog",
+    ],
+)
+
+py_binary(
+    name = "codeowners_generate",
+    srcs = ["codeowners_generate.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//codeowners",
+        "//utils",
+        "@pip_rules_mongo//pyyaml",
+    ],
+)
+
+py_library(
+    name = "codeowners_lib",
+    srcs = [
+        "check_github_codeowner_errors.py",
+        "codeowners_generate.py",
+        "parsers/owners_v1.py",
+        "parsers/owners_v2.py",
+        "validate_codeowners.py",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//utils",
+        "@pip_rules_mongo//pyyaml",
+        "@pip_rules_mongo//requests",
+        "@pip_rules_mongo//structlog",
     ],
 )

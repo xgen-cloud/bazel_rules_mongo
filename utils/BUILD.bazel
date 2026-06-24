@@ -1,14 +1,13 @@
-load("@poetry//:dependencies.bzl", "dependency")
-load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+load("@rules_python//python:defs.bzl", "py_library")
 
 exports_files(["evergreen_git.py"])
 
 py_library(
-    name = "evergreen_git",
+    name = "utils",
     srcs = ["evergreen_git.py"],
     visibility = ["//visibility:public"],
     deps = [
-        dependency("pyyaml"),
-        dependency("gitpython"),
+        "@pip_rules_mongo//gitpython",
+        "@pip_rules_mongo//pyyaml",
     ],
 )

@@ -1,0 +1,11 @@
+load("@rules_python//python:defs.bzl", "py_test")
+
+py_test(
+    name = "test_changed_files",
+    srcs = ["test_changed_files.py"],
+    deps = [
+        "//utils",
+        "@pip_rules_mongo//gitpython",
+        "@pip_rules_mongo//mock",
+    ],
+)

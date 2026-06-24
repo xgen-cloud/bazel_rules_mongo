@@ -1,1 +1,71 @@
+load("@gazelle//:def.bzl", "DEFAULT_LANGUAGES", "gazelle", "gazelle_binary")
+load("@pip_rules_mongo//:requirements.bzl", "all_whl_requirements")
+load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
+load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
+
 # This file intentionally left blank
+load("@rules_uv//uv:pip.bzl", "pip_compile")
+load("//sh:sh.bzl", "sh_template")
+
+# gazelle:python_root
+# gazelle:python_library_naming_convention $package_name$_lib
+# gazelle:python_binary_naming_convention $package_name$
+# gazelle:python_generation_mode package
+# gazelle:resolve py codeowners //codeowners
+# gazelle:resolve py buildscripts //buildscripts
+# gazelle:resolve py buildscripts.bazel_rules_mongo.utils //utils
+
+modules_mapping(
+    name = "modules_map",
+    include_stub_packages = True,
+    visibility = ["//build/bazel:__subpackages__"],
+    # exclude_patterns = [
+    #     "^_|(\\._)+",  # This is the default.
+    #     "(\\.tests)+",  # Add a custom one to get rid of the psutil tests.
+    # ],
+    wheels = all_whl_requirements,
+)
+
+pip_compile(
+    name = "update_requirements",
+    extra_args = ["--quiet"],  # uv prints the whole file to stdout; suppress.
+    requirements_in = "//:requirements.in",
+    requirements_txt = "//:requirements.txt",
+    tags = [
+        "manual",
+        "requires-network",
+    ],
+)
+
+gazelle_python_manifest(
+    name = "gazelle_python_manifest",
+    modules_mapping = ":modules_map",
+    pip_repository_name = "pip_rules_mongo",
+    # NOTE: We can pass a list just like in `bzlmod_build_file_generation` example
+    # but we keep a single target here for regression testing.
+    requirements = "//:requirements.txt",
+    tags = ["no-mypy"],
+    visibility = ["//visibility:public"],
+)
+
+gazelle_binary(
+    name = "gazelle_binary",
+    languages = [
+        "@rules_python_gazelle_plugin//python:python",
+    ],
+)
+
+gazelle(
+    name = "gazelle",
+    command = "fix",
+    gazelle = ":gazelle_binary",
+)
+
+# sh_template(
+#     name = "gazelle",
+#     template = ":gazelle.sh",
+#     tools = {
+#         "gazelle": ":gazelle_run",
+#     },
+#     visibility = ["//visibility:public"],
+# )

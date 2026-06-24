@@ -1,5 +1,4 @@
-load("@poetry//:dependencies.bzl", "dependency")
-load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 py_binary(
     name = "engflow_auth",
@@ -7,8 +6,13 @@ py_binary(
     main = "engflow_auth.py",
     visibility = ["//visibility:public"],
     deps = [
-        dependency(
-            "retry",
-        ),
+        "@pip_rules_mongo//retry",
     ],
+)
+
+py_library(
+    name = "engflow_auth_lib",
+    srcs = ["engflow_auth.py"],
+    visibility = ["//:__subpackages__"],
+    deps = ["@pip_rules_mongo//retry"],
 )

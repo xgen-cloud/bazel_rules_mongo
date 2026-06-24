@@ -1,6 +1,68 @@
-###############################################################################
-# Bazel now uses Bzlmod by default to manage external dependencies.
-# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
-#
-# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
-###############################################################################
+module(
+    name = "bazel_rules_mongo",
+    version = "0.1.15",
+)
+
+GOSRE_PYTHON_VERSION = "3.14.4"
+
+bazel_dep(name = "rules_python", version = "2.0.2")
+bazel_dep(name = "gazelle", version = "0.51.0")
+bazel_dep(name = "rules_shell", version = "0.8.0")
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+
+bazel_dep(name = "rules_python_gazelle_plugin", version = "2.0.2", dev_dependency = True)
+
+bazel_dep(name = "rules_uv", version = "0.89.2")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    configure_coverage_tool = True,
+    ignore_root_user_error = True,
+    python_version = GOSRE_PYTHON_VERSION,
+)
+python.defaults(python_version = GOSRE_PYTHON_VERSION)
+
+uv = use_extension("@rules_python//python/uv:uv.bzl", "uv", dev_dependency = True)
+uv.configure(version = "0.9.16")
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    experimental_index_url = "https://pypi.org/simple",
+    hub_name = "pip_rules_mongo",
+    python_version = GOSRE_PYTHON_VERSION,
+    requirements_lock = "//:requirements.txt",
+    target_platforms = [
+        "linux_x86_64",
+        "linux_aarch64",
+        "osx_x86_64",
+        "osx_aarch64",
+    ],
+)
+
+use_repo(pip, "pip_rules_mongo")
+
+bazel_dep(name = "rules_mypy", version = "0.41.0")
+
+# v0.41.0 is not in the BCR yet; needed for bazel 9 compatibility.
+archive_override(
+    module_name = "rules_mypy",
+    integrity = "sha256-uhIkx1Nv3GeQCa6yclkT1Agp7W54cMOntK3dMFtb5Zc=",
+    strip_prefix = "rules_mypy-0.41.0",
+    urls = ["https://github.com/bazel-contrib/rules_mypy/archive/refs/tags/v0.41.0.tar.gz"],
+)
+
+types = use_extension("@rules_mypy//mypy:types.bzl", "types")
+types.requirements(
+    name = "pip_types_rules_mongo",
+    pip_requirements = "@pip_rules_mongo//:requirements.bzl",
+    requirements_txt = "//:requirements.in",
+)
+use_repo(types, "pip_types_rules_mongo")
+
+
+_codeowners_validator = use_extension("//codeowners:codeowners_validator.bzl", "codeowners_validator_extension")
+use_repo(_codeowners_validator, "codeowners_validator")
+
+_codeowners_binary = use_extension("//codeowners:codeowners_binary.bzl", "codeowners_binary_extension")
+use_repo(_codeowners_binary, "codeowners_binary")

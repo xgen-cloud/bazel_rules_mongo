@@ -431,14 +431,14 @@ def main():
     parser.add_argument(
         "--run-validation",
         help="When set, validation will be run against the resulting CODEOWNERS file.",
-        default=True,
-        action="store_false",
+        default=False,
+        action="store_true",
     )
     parser.add_argument(
         "--check-new-files",
         help="When set, this script will check new files to ensure they are owned.",
-        default=True,
-        action="store_false",
+        default=False,
+        action="store_true",
     )
     parser.add_argument(
         "--expansions-file",

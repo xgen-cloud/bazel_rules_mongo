@@ -1,0 +1,14 @@
+# after modifying this file, make sure to regenerate downstream dependencies:
+#
+#   bazel run //:update_requirements
+#   bazel run //:gazelle_python_manifest.update
+#
+
+pyyaml
+retry
+gitpython
+requests
+structlog
+typer
+toml
+mock
